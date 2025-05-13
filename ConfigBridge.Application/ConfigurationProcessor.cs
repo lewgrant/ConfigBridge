@@ -9,19 +9,26 @@ namespace ConfigBridge.Application
 {
 	public class ConfigurationProcessor
 	{
-		public List<ConfigItem> ParseConfigItems(string jsonConfig)
+        private readonly IFileSystem fileSystem;
+
+        public ConfigurationProcessor(IFileSystem fileSystem)
+        {
+            this.fileSystem = fileSystem ?? throw new ArgumentNullException(nameof(fileSystem));
+        }
+
+        public List<ConfigItem> ParseConfigItems(string jsonConfig)
 		{
 			var configurationReader = new ConfigurationReader();
 			return configurationReader.ParseConfigItems(jsonConfig);
 		}
 		public string FormatJsonFile(string jsonFilePath)
 		{
-            if (!File.Exists(jsonFilePath))
+            if (!fileSystem.Exists(jsonFilePath))
             {
                 throw new FileNotFoundException($"The specified JSON file was not found: {jsonFilePath}");
             }
 
-            string jsonContent = File.ReadAllText(jsonFilePath);
+            string jsonContent = fileSystem.ReadAllText(jsonFilePath);
 
             // Validate and minify JSON
             string minifiedJson;

@@ -20,7 +20,7 @@ namespace ConfigBridge.ConsoleApp
 				// Handle --json flag
 				if (!string.IsNullOrWhiteSpace(parsedArgs.JsonFilePath))
 				{
-					var configurationProcessor = new ConfigurationProcessor();
+					var configurationProcessor = new ConfigurationProcessor(new FileSystem());
 					string formattedJson = configurationProcessor.FormatJsonFile(parsedArgs.JsonFilePath);
 
 					Console.WriteLine("\nFormatted JSON for Command-Line Usage:");
@@ -28,7 +28,7 @@ namespace ConfigBridge.ConsoleApp
 					return 0; // Success
 				}
 				// Process configuration
-				var configurationProcessorForConfig = new ConfigurationProcessor();
+				var configurationProcessorForConfig = new ConfigurationProcessor(new FileSystem());
 				var configItems = configurationProcessorForConfig.ParseConfigItems(parsedArgs.JsonConfig);
 
 				// Debug logging
@@ -43,7 +43,7 @@ namespace ConfigBridge.ConsoleApp
 
 				// Execute the .NET Core application
 				var coreAppRunner = new CoreAppRunner(new FileSystem(), new ProcessFactory());
-				coreAppRunner.RunCoreApp(parsedArgs.CoreAppPath, resolvedValues, parsedArgs.DebugMode);
+				coreAppRunner.RunCoreApp(parsedArgs.CoreAppPath, resolvedValues, parsedArgs.DebugMode, parsedArgs.UseEnvironmentVariables);
 
 				Console.ForegroundColor = ConsoleColor.Green;
 				Console.WriteLine("\n.NET Core application execution completed successfully.");
@@ -53,12 +53,13 @@ namespace ConfigBridge.ConsoleApp
 			catch (Exception ex)
 			{
 				List<string> usage = new List<string>() {
-					$"\nUsage: {_appName} <appPath> <jsonConfigString> [--debug] or {_appName} --json <path to .json file>",
+					$"\nUsage: {_appName} <appPath> <jsonConfigString> [--ev] [--debug] or {_appName} --json <path to .json file>",
 					"\nArguments:",
 					"  <appPath>            : (Required) Full path to the .NET CORE executable (.exe) or .NET DLL to run.",
 					"  <jsonConfigString>   : (Required) JSON string detailing configurations to retrieve and forward.",
 					"                       Example JSON: '[{\"ConfigType\":\"Sett\",\"Name\":\"MySetting\",\"OutputParameter\":\"setting1\"},{\"ConfigType\":\"Conn\",\"Name\":\"MyDb\",\"OutputParameter\":\"dbConnection\"}]'",
 					"  --json <path>        : (Optional) Path to a JSON file to format for command-line usage.",
+                    "  --ev                 : (Optional) Pass configuration values as environment variables instead of command-line arguments.",
 					"  --debug              : (Optional) Enables detailed diagnostic output during execution.",
 					"\nJSON Object Structure for <jsonConfigString> items:",
 					"  {",
