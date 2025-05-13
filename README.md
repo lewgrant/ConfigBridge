@@ -1,6 +1,6 @@
 # ConfigBridge
 
-**ConfigBridge** is a .NET Framework 4.8 console utility that bridges configuration values from a machine.config (or other sources) to .NET Core/5+ applications at runtime. It parses a JSON configuration, retrieves the requested values, and launches the target .NET application with those values as command-line arguments.
+**ConfigBridge** is a .NET Framework 4.8 console utility that bridges configuration values from a machine.config (or other sources) to .NET Core/5+ applications at runtime. It parses a JSON mapping, retrieves the requested values, and launches the target .NET application with those values as command-line arguments.
 
 ---
 
